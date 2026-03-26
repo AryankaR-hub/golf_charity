@@ -24,3 +24,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* Custom Terminal Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0F0E0E;
+}
+::-webkit-scrollbar-thumb {
+  background: #2C2621;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #468A9A;
+}
