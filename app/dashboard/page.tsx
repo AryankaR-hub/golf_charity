@@ -23,7 +23,10 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true) 
   const [scanning, setScanning] = useState(false) 
   const [charities, setCharities] = useState<any[]>([])
-  const [winningNumbers, setWinningNumbers] = useState<number[]>([])
+  
+  // ✅ FIXED: Allow null to prevent TypeScript error 2345
+  const [winningNumbers, setWinningNumbers] = useState<number[] | null>(null)
+  
   const [matchResult, setMatchResult] = useState<number | null>(null)
   const [winData, setWinData] = useState<any>(null)
 
@@ -33,17 +36,24 @@ export default function Dashboard() {
       const { data, error } = await supabase
         .from('draws')
         .select('winning_numbers')
-        .order('draw_date', { ascending: false })
-        .limit(1)
-        .single()
+        .order('created_at', { ascending: false })
+        .limit(1); 
 
-      if (data && data.winning_numbers) {
-        setWinningNumbers(data.winning_numbers)
+      if (error) {
+        console.error("Dashboard Fetch Error:", error.message);
+        return;
+      }
+
+      // ✅ FIXED: Check if array has data, otherwise set to null
+      if (data && data.length > 0) {
+        setWinningNumbers(data[0].winning_numbers);
+      } else {
+        setWinningNumbers(null); 
       }
     } catch (err) {
-      console.error("Draw fetch error:", err)
+      console.error("System sync error:", err);
     }
-  }
+  };
 
   useEffect(() => {
     setMounted(true)
@@ -61,7 +71,7 @@ export default function Dashboard() {
 
       try {
         const [profileRes, scoresRes, charitiesRes, winnersRes] = await Promise.all([
-          supabase.from('profiles').select('*').eq('id', currentUser.id).single(),
+          supabase.from('profiles').select('*').eq('id', currentUser.id).maybeSingle(),
           supabase.from('scores').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(5),
           supabase.from('charities').select('*'),
           supabase.from('winners').select('*').eq('user_id', currentUser.id).eq('status', 'pending').order('created_at', { ascending: false }).limit(1)
@@ -102,12 +112,10 @@ export default function Dashboard() {
     }
   }, [])
 
-  // 🖱️ ACTION: Check Draw Button (Now Functional)
   const handleManualCheck = async () => {
     if (profile?.subscription_status !== 'active') return;
     setScanning(true)
     
-    // UI "Scanning" feel
     setTimeout(async () => {
       await fetchLatestDraw()
       if (user) await fetchScores(user.id)
@@ -139,15 +147,12 @@ export default function Dashboard() {
   )
 
   const isSubscriber = profile?.subscription_status === 'active'
-  
-  // ✅ ADMIN CHECK: Matches your correct email
   const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
 
   return (
     <div className="min-h-screen bg-[#0F0E0E] text-[#E5E5DB] font-sans pb-20 selection:bg-[#468A9A]/30">
       <div className="max-w-[1400px] mx-auto p-4 md:p-8">
         
-        {/* 🏆 ADMIN ACCESS PANEL */}
         {isAdmin && (
           <div className="mb-6 flex justify-end">
             <button 
@@ -160,7 +165,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* 🎉 WINNER MODAL */}
         {winData && (
           <div className="mb-8 animate-in fade-in zoom-in duration-500 bg-gradient-to-r from-[#468A9A] to-[#F5F5DC] p-[1px] rounded-2xl">
             <div className="bg-[#0F0E0E] rounded-[15px] p-4 flex items-center justify-between">
@@ -198,7 +202,7 @@ export default function Dashboard() {
                 <div className="absolute -top-24 -right-24 w-80 h-80 bg-[#468A9A] opacity-[0.05] blur-[120px] pointer-events-none" />
                 
                 {/* 🎯 Draw Result Rendering */}
-                <DrawResult winningNumbers={winningNumbers} matchResult={matchResult} />
+                <DrawResult winningNumbers={winningNumbers || []} matchResult={matchResult} />
                 
                 <div className="mt-12 flex flex-col sm:flex-row items-center gap-8 pt-10 border-t border-[#2C2621]">
                     <button

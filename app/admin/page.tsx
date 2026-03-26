@@ -6,6 +6,7 @@ import { BarChart3, ShieldAlert, Trophy, Loader2, LayoutDashboard, ArrowLeft } f
 import { useRouter } from 'next/navigation'
 
 const ADMIN_EMAIL = "aarurasetty@gmail.com"; 
+// 🚨 Ensure this is false for real random numbers
 const TEST_MODE = false; 
 
 export default function AdminPage() {
@@ -18,6 +19,7 @@ export default function AdminPage() {
   useEffect(() => {
     const initializeAdmin = async () => {
       const { data: { user } } = await supabase.auth.getUser()
+      // Case-insensitive check for security
       if (user && user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
         setIsAuthorized(true)
         fetchActivePool()
@@ -36,14 +38,28 @@ export default function AdminPage() {
     setActivePoolCount(count || 0);
   }
 
+  // ✅ FIXED: Bulletproof Random Generator
+  // ✅ FIXED: Robust Random Generator
   const generateNumbers = () => {
-    if (TEST_MODE) return [1, 2, 3, 10, 20]
-    const numbers = new Set<number>()
-    while (numbers.size < 5) {
-      numbers.add(Math.floor(Math.random() * 45) + 1)
+    // We'll use a local check to ensure no scope errors
+    const isTest = TEST_MODE as boolean;
+
+    if (isTest) {
+      console.warn("⚠️ TEST_MODE ACTIVE");
+      return [1, 2, 3, 10, 20];
     }
-    return Array.from(numbers).sort((a, b) => a - b)
-  }
+    
+    const finalNumbers: number[] = [];
+    while (finalNumbers.length < 5) {
+      const r = Math.floor(Math.random() * 45) + 1;
+      // Ensure we don't add the same number twice
+      if (!finalNumbers.includes(r)) {
+        finalNumbers.push(r);
+      }
+    }
+
+    return finalNumbers.sort((a, b) => a - b);
+  };
 
   const runDraw = async () => {
     if (!confirm("CRITICAL: Execute Global Draw Protocol? This will notify all winners.")) return
@@ -53,6 +69,7 @@ export default function AdminPage() {
     const winStrings = winningNumbers.map(n => n.toString());
 
     try {
+      // 1. Save to Database
       const { data: drawData, error: drawErr } = await supabase
         .from('draws')
         .insert({
@@ -64,6 +81,7 @@ export default function AdminPage() {
 
       if (drawErr) throw drawErr
 
+      // 2. Scan for Winners
       const { data: subscribers } = await supabase
           .from('profiles')
           .select('id, email')
@@ -121,7 +139,7 @@ export default function AdminPage() {
     <div className="min-h-screen bg-[#0F0E0E] text-[#F5F5DC] p-6 md:p-12 selection:bg-[#468A9A]/30 font-sans">
       <div className="max-w-6xl mx-auto">
         
-        {/* 🛠️ NEW TOP NAVIGATION */}
+        {/* Navigation */}
         <div className="flex justify-between items-center mb-10">
           <button 
             onClick={() => router.push('/dashboard')}
@@ -153,7 +171,6 @@ export default function AdminPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* Controls Panel */}
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-[#1A1A1A] border border-[#2C2621] p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden group">
                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -184,7 +201,6 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Results Display */}
           <div className="lg:col-span-2">
             {result ? (
               <div className="bg-[#1A1A1A] border border-[#468A9A]/30 p-10 rounded-[3rem] animate-in fade-in slide-in-from-bottom-4 duration-700 shadow-2xl relative overflow-hidden">
@@ -236,7 +252,6 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Bottom Exit */}
         <div className="mt-20 pt-10 border-t border-[#2C2621] flex justify-center">
           <button 
             onClick={() => router.push('/dashboard')}
