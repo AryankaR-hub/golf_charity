@@ -16,10 +16,11 @@ An exclusive, high-performance web terminal for tracking golf scores and managin
    cd sapphire-club
    npm install
 
-2.Create a .env.local file with:  
+2. Create a .env.local file with:  
   NEXT_PUBLIC_SUPABASE_URL=your_project_url
   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-3.Launch:
+
+3. Launch:
 npm run dev
 
 Key Features
