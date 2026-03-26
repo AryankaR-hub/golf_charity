@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📄 FILE 1: README.md
+# 💎 The Sapphire Club | Premium Charity Draws
 
-## Getting Started
+An exclusive, high-performance web terminal for tracking golf scores and managing premium charity draw entries. Built with a "Cyber-Luxe" aesthetic, featuring deep obsidian tones and Sapphire Teal accents.
 
-First, run the development server:
+## 🚀 Tech Stack
+* **Framework:** Next.js 15 (App Router)
+* **Styling:** Tailwind CSS 4.0
+* **Database & Auth:** Supabase
+* **Icons:** Lucide React
+* **Typography:** Geist Sans & Geist Mono
 
-```bash
+## 🛠️ Getting Started
+1. **Clone & Install:**
+   ```bash
+   git clone <your-repo-url>
+   cd sapphire-club
+   npm install
+
+2.Create a .env.local file with:  
+  NEXT_PUBLIC_SUPABASE_URL=your_project_url
+  NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+3.Launch:
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Key Features
+Encrypted Auth: Secure member login via Supabase.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Performance Logs: Track up to 5 recent Stableford scores (1-45 range).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Auto-Cycling: Automatically maintains only the 5 most recent entries.
 
-## Learn More
+### 💡 Quick Tips for your Repo:
+* **License:** Since this is a "Premium/Exclusive" club project, you might eventually want to add a `LICENSE` file (like MIT or Private).
+* **Images:** If you take a screenshot of that beautiful new **Score Section**, you can save it as `screenshot.png` in your repo and add `![Dashboard](screenshot.png)` to the README to show it off.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Would you like me to generate the "Forgot Password" logic for your Auth page next, or are we moving on to the Draw Entry section?**
